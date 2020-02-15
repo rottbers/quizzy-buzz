@@ -1,0 +1,21 @@
+{
+  "name": "Quizzy buzz",
+  "short_name": "Quizzy",
+  "icons": [
+    {
+      "src": "favicon-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "favicon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#141e30",
+  "background_color": "#141e30",
+  "start_url": "/",
+  "display": "minimal-ui",
+  "orientation": "portrait"
+}

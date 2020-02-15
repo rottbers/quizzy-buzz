@@ -1,0 +1,14 @@
+@import '../utilities/variables';
+
+.error {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  p {
+    margin-bottom: 16px;
+    font-family: $mono-font;
+    text-align: center;
+  }
+}

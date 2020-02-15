@@ -1,0 +1,30 @@
+@import '../utilities/variables';
+
+.answer-buttons {
+  margin: 20px 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  & button {
+    margin: 5px;
+    min-height: 50px;
+    width: calc(50% - 10px);
+
+    @media (max-width: $breakpoint) {
+      width: 100%;
+    }
+  }
+}
+
+.correct {
+  background-color: $green-color !important;
+  border-color: $green-color !important;
+  color: $secondary-text-color !important;
+}
+
+.incorrect {
+  background-color: $red-color !important;
+  border-color: $red-color !important;
+  color: $primary-text-color !important;
+}
