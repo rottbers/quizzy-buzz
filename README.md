@@ -6,6 +6,8 @@ Disclaimer... not advocating excessive drinking nor promoting alcohol, just a si
 
 ## Development
 
+![Netlify Status](https://api.netlify.com/api/v1/badges/81fdb109-b373-4702-9933-cd9642c089ba/deploy-status)
+
 This project uses [parcel](https://parceljs.org/) as its bundler.
 
 ### `npm run dev`
