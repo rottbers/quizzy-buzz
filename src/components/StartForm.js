@@ -55,8 +55,9 @@ const StartForm = ({
           min="1"
           max="50"
           value={numberOfRounds}
+          id="rounds"
           name="rounds"
-          disabled={true}
+          readOnly
         ></input>
         <button
           type="button"

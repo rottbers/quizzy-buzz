@@ -16,12 +16,13 @@
 
     & input {
       position: absolute;
-      left: -9999px;
-      top: -9999px;
+      width: 0px;
+      height: 0px;
+      opacity: 0;
     }
 
     & input + label {
-      padding: 6px 20px;
+      padding: 8px 20px;
       width: 100%;
       border-right: 2px solid $primary-text-color;
       text-align: center;
@@ -51,6 +52,7 @@
     justify-content: space-between;
     margin-bottom: 32px;
     margin-top: 4px;
+    touch-action: none;
 
     & input[type='number'] {
       max-width: 100px;
@@ -79,7 +81,6 @@
       border-radius: 0px;
       min-width: 100px;
       outline: none;
-      touch-action: none;
     }
   }
 }
