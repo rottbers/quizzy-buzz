@@ -15,6 +15,17 @@ const ErrorMessage = ({ tryAgainHandler }) => (
       </span>
     </p>
     <button onClick={tryAgainHandler}>try again?</button>
+    <p>
+      Know what&apos;s wrong? Feel free to{' '}
+      <a
+        href="https://github.com/rottbers/quizzy-buzz"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        open an issue on Github
+      </a>
+      .
+    </p>
   </div>
 );
 

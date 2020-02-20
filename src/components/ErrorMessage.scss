@@ -7,8 +7,12 @@
   align-items: center;
 
   p {
-    margin-bottom: 16px;
+    margin: 16px 0;
     font-family: $mono-font;
     text-align: center;
+
+    &:last-child {
+      margin-top: 60px;
+    }
   }
 }
