@@ -1,140 +1,44 @@
-import React, { useState } from 'react';
-import StartInfo from './components/StartInfo';
-import StartForm from './components/StartForm';
-import LoadingSpinner from './components/LoadingSpinner';
-import ErrorMessage from './components/ErrorMessage';
-import QuestionHeader from './components/QuestionHeader';
-import AnswerButtons from './components/AnswerButtons';
-import AnswerMessage from './components/AnswerMessage';
-import { getQuestions, formatQuestions } from './utilities/questions';
-import './App.scss';
+import React, { useContext } from 'react';
+import { StateContext } from './contexts/StateContext';
+
+import LoadingPage from './pages/LoadingPage';
+import ErrorPage from './pages/ErrorPage';
+import GamePage from './pages/GamePage';
+import StartPage from './pages/StartPage';
+
+import { getQuestions } from './utilities';
+
+import './styles/tailwind.css';
 
 const App = () => {
-  const [questions, setQuestions] = useState(null);
-  const [numberOfRounds, setNumberOfRounds] = useState(4);
-  const [difficulty, setDifficulty] = useState('medium');
-  const [round, setRound] = useState(0);
-  const [score, setscore] = useState(0);
-  const [userAnswer, setUserAnswer] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
+  const { state, updateState } = useContext(StateContext);
+  const { isLoading, isError, isPlaying, difficulty, type, rounds } = state;
 
-  const setupQuestions = () => {
-    setIsLoading(true);
+  const handlePlay = () => {
+    updateState({ isLoading: true, isError: false });
 
-    const type = 'multiple'; // 'multiple' = 4 answer alternatives, 'boolean' = 2
-    const URL = `https://opentdb.com/api.php?amount=${numberOfRounds}&type=${type}&difficulty=${difficulty}`;
+    const url = `https://opentdb.com/api.php?difficulty=${difficulty}&type=${type}&amount=${rounds}`;
 
-    getQuestions(URL)
-      .then(questions => {
-        setQuestions(formatQuestions(questions));
-        setIsLoading(false);
-      })
-      .catch(error => {
-        setIsError(true);
-        setIsLoading(false);
-        throw new Error(error);
-      });
+    getQuestions(url)
+      .then((questions) => updateState({ questions, isLoading: false }))
+      .catch(() => updateState({ isError: true, isLoading: false }));
+
+    updateState({ score: 0, round: 0, userAnswers: [], isPlaying: true });
   };
 
-  // destructure question variables based on round
-  // intentional var instead of const/let due to scope (block vs function)
-  if (questions) {
-    var { question, correct_answer, shuffled_answers } = questions[round];
+  if (isLoading) {
+    return <LoadingPage />;
   }
 
-  // #########
-  // Handlers
-  // #########
+  if (isError) {
+    return <ErrorPage handleTryAgain={handlePlay} />;
+  }
 
-  const handleFormChange = e => {
-    if (e.target.name === 'difficulty') {
-      setDifficulty(e.target.value);
-    }
+  if (isPlaying) {
+    return <GamePage />;
+  }
 
-    if (e.target.id === 'increment-round') {
-      if (numberOfRounds < 50) {
-        setNumberOfRounds(numberOfRounds + 1);
-      }
-    }
-
-    if (e.target.id === 'decrement-round') {
-      if (numberOfRounds > 1) {
-        setNumberOfRounds(numberOfRounds - 1);
-      }
-    }
-  };
-
-  const handlePlay = e => {
-    // prevent default form submit behavior
-    e.preventDefault();
-
-    // get questions
-    setupQuestions();
-
-    // reset score and round
-    setscore(0);
-    setRound(0);
-
-    // update playing state
-    setIsPlaying(true);
-  };
-
-  const handleAnswer = e => {
-    const clickedAnswer = e.target.value;
-
-    // update user answer
-    setUserAnswer(clickedAnswer);
-
-    // update score
-    if (clickedAnswer === correct_answer) {
-      setscore(score + 1);
-    }
-  };
-
-  const handleNextQuestion = () => {
-    // reset user answer
-    setUserAnswer(null);
-
-    // increment round or end game
-    if (round <= numberOfRounds - 2) {
-      setRound(round + 1);
-    } else {
-      setIsPlaying(false);
-    }
-  };
-
-  return (
-    <div className="app">
-      {!isPlaying ? (
-        <>
-          <StartInfo />
-          <StartForm
-            {...{ numberOfRounds, difficulty, handleFormChange, handlePlay }}
-          />
-        </>
-      ) : isLoading ? (
-        <LoadingSpinner />
-      ) : isError ? (
-        <ErrorMessage tryAgainHandler={handlePlay} />
-      ) : (
-        <>
-          <QuestionHeader {...{ question, round, numberOfRounds, score }} />
-          <AnswerButtons
-            {...{ shuffled_answers, correct_answer, handleAnswer, userAnswer }}
-          />
-          <AnswerMessage {...{ correct_answer, userAnswer, difficulty }} />
-          <button
-            className={!userAnswer ? 'hidden' : null}
-            onClick={handleNextQuestion}
-          >
-            {round < numberOfRounds - 1 ? 'Next question' : 'Play again'}
-          </button>
-        </>
-      )}
-    </div>
-  );
+  return <StartPage handlePlay={handlePlay} />;
 };
 
 export default App;
