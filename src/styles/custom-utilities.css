@@ -1,5 +1,5 @@
 .radio-container {
-  @apply flex justify-between mt-2 mb-4 rounded-md border border-2 border-white;
+  @apply flex justify-between mt-2 rounded-md border border-2 border-white;
 }
 
 .radio-container input {
@@ -24,9 +24,13 @@
   @apply bg-white text-gray-900;
 }
 
+.radio-container input:checked:focus + label {
+  @apply outline-none shadow-outline;
+}
+
 /* TODO: style slider */
 .slider {
-  @apply mb-6 mt-2 w-full;
+  @apply w-full;
   cursor: pointer;
   background: transparent;
 }

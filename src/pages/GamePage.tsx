@@ -1,47 +1,41 @@
 import React, { useContext } from 'react';
 import { StateContext } from '../contexts/StateContext';
 
-const GamePage = () => {
+function GamePage(): JSX.Element {
   const { state, updateState } = useContext(StateContext);
-  const { difficulty, round, rounds, score, questions, userAnswers } = state;
+  const { round, rounds, score, questions, userAnswers } = state;
 
-  const { question, shuffled_answers, correct_answer } = questions[round];
+  const { question, all_answers, correct_answer } = questions[round];
   const userAnswer = userAnswers[round];
 
-  const handleAnswer = (e) => {
-    const selectedAnswer = e.target.value;
+  function handleAnswer(e: React.MouseEvent<HTMLButtonElement>) {
+    const selectedAnswer = e.target.value; // TODO: look into type error
 
-    selectedAnswer === correct_answer
-      ? updateState({
-          userAnswers: [...userAnswers, selectedAnswer],
-          score: score + 1,
-        })
-      : updateState({ userAnswers: [...userAnswers, selectedAnswer] });
-  };
+    if (selectedAnswer === correct_answer) {
+      updateState({
+        userAnswers: [...userAnswers, selectedAnswer],
+        score: score + 1,
+      });
+    } else {
+      updateState({ userAnswers: [...userAnswers, selectedAnswer] });
+    }
+  }
 
-  const handleNextRound = () =>
-    round < rounds - 1
-      ? updateState({ round: round + 1 })
-      : updateState({ isPlaying: false });
+  function handleNextRound() {
+    if (round < rounds - 1) {
+      updateState({ round: round + 1 });
+    } else {
+      updateState({ isPlaying: false, isGameOver: true });
+    }
+  }
 
   const showAnswer = !!userAnswer;
 
-  const handleButtonHighlight = (answer) => {
+  function handleButtonHighlight(answer: string) {
     if (!showAnswer) return '';
     if (answer === correct_answer) return 'bg-green-600 border-green-600';
     if (answer === userAnswer) return 'bg-red-700 border-red-700';
-  };
-
-  const sips = (() => {
-    switch (difficulty) {
-      case 'easy':
-        return '1 sip 🍹';
-      case 'medium':
-        return '2 sips 🍹🍹';
-      case 'hard':
-        return '3 sips 🍹🍹🍹';
-    }
-  })();
+  }
 
   return (
     <div className="container mx-auto p-2 md:p-4 min-h-screen flex flex-col md:justify-center">
@@ -55,7 +49,7 @@ const GamePage = () => {
         {question}
       </h1>
       <div className="flex flex-wrap justify-center my-2 md:my-4">
-        {shuffled_answers.map((answer) => (
+        {all_answers.map((answer: string) => (
           <button
             value={answer}
             key={answer}
@@ -69,16 +63,14 @@ const GamePage = () => {
       </div>
       <div className={`self-center text-center ${!showAnswer && 'invisible'}`}>
         <p className={'self-center mb-4 text-xl font-semibold'}>
-          {userAnswer === correct_answer
-            ? `🎊 hiya! ${sips} to give away`
-            : `🙈 nope... drink ${sips}`}
+          {userAnswer === correct_answer ? `🎊 Correct!` : `🙈 Wrong answer..`}
         </p>
         <button onClick={handleNextRound}>
-          {round < rounds - 1 ? 'Next question' : 'Back home'}
+          {round < rounds - 1 ? 'Next question' : 'See summary'}
         </button>
       </div>
     </div>
   );
-};
+}
 
 export default GamePage;

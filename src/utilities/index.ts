@@ -1,9 +1,16 @@
+import { Question } from '../types';
+
+interface Session {
+  token: string;
+  tokenLastUsed: number;
+}
+
 // to prevent getting the same question twice a session token is used
 // with each request (expires after 6 hours of inactivity).
-const getSession = async () => {
-  const session = JSON.parse(localStorage.getItem('session'));
+async function getSession() {
+  const session: Session | null = JSON.parse(localStorage.getItem('session')); // TODO: look into type error
 
-  if (session && session.tokenLastUsed > Date.now() - 18000000) {
+  if (session !== null && session.tokenLastUsed > Date.now() - 18000000) {
     return session;
   }
 
@@ -16,43 +23,51 @@ const getSession = async () => {
     const newSession = { token, tokenLastUsed: null };
 
     return newSession;
-    
   } catch (error) {
     throw new Error(error);
   }
-};
+}
 
-const formatQuestions = (questions) => {
-  const decodeHTML = (html) => {
-    let text = document.createElement('textarea');
+function formatQuestions(questions: Question[]) {
+  function decodeHTML(html: string) {
+    const text = document.createElement('textarea');
     text.innerHTML = html;
     return text.value;
-  };
+  }
 
-  const shuffleAnswers = (array) => array.sort(() => Math.random() - 0.5);
+  function shuffleAnswers(array: string[]) {
+    return array.sort(() => Math.random() - 0.5);
+  }
 
   const formatedQuestions = questions.map((q) => {
     const { question, correct_answer, incorrect_answers } = q;
 
     const decodedQuestion = decodeHTML(question);
     const decodedCorrectAnswer = decodeHTML(correct_answer);
-    const decodedIncorrectAnswers = incorrect_answers.map((answer) => decodeHTML(answer));
+    const decodedIncorrectAnswers = incorrect_answers.map((answer) =>
+      decodeHTML(answer)
+    );
 
-    const shuffled_answers = shuffleAnswers([ ...decodedIncorrectAnswers, decodedCorrectAnswer ]);
+    const answers = [...decodedIncorrectAnswers, decodedCorrectAnswer];
+
+    const all_answers =
+      answers.length <= 2
+        ? answers.sort().reverse() // for boolean type question/answer
+        : shuffleAnswers(answers); // for multiple type question/answer
 
     return {
       ...q,
       question: decodedQuestion,
       correct_answer: decodedCorrectAnswer,
       incorrect_answers: decodedIncorrectAnswers,
-      shuffled_answers,
+      all_answers,
     };
   });
 
   return formatedQuestions;
-};
+}
 
-const getQuestions = async (url) => {
+export async function getQuestions(url: string): Promise<Question[]> {
   try {
     const { token } = await getSession();
 
@@ -64,10 +79,11 @@ const getQuestions = async (url) => {
 
     const questions = formatQuestions(results);
     return questions;
-
   } catch (error) {
     throw new Error(error);
   }
-};
+}
 
-export { getQuestions };
+export function capitalizeString(string: string): string {
+  return string[0].toUpperCase() + string.slice(1);
+}
