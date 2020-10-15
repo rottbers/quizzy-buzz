@@ -1,8 +1,8 @@
-import React, { useContext } from 'react';
-import { StateContext } from '../contexts/StateContext';
+import React from 'react';
+import { useStateContext } from '../contexts/StateContext';
 
-function GamePage(): JSX.Element {
-  const { state, updateState } = useContext(StateContext);
+const GamePage: React.FC = () => {
+  const { state, dispatch } = useStateContext();
   const { round, rounds, score, questions, userAnswers } = state;
 
   const { question, all_answers, correct_answer } = questions[round];
@@ -10,23 +10,17 @@ function GamePage(): JSX.Element {
 
   function handleAnswer(e: React.MouseEvent<HTMLButtonElement>) {
     const selectedAnswer = e.target.value; // TODO: look into type error
-
-    if (selectedAnswer === correct_answer) {
-      updateState({
-        userAnswers: [...userAnswers, selectedAnswer],
-        score: score + 1,
-      });
-    } else {
-      updateState({ userAnswers: [...userAnswers, selectedAnswer] });
-    }
+    dispatch({
+      type: 'UPDATE_SCORE',
+      data: {
+        correctAnswer: correct_answer,
+        selectedAnswer,
+      },
+    });
   }
 
   function handleNextRound() {
-    if (round < rounds - 1) {
-      updateState({ round: round + 1 });
-    } else {
-      updateState({ isPlaying: false, isGameOver: true });
-    }
+    dispatch({ type: 'NEXT_ROUND' });
   }
 
   const showAnswer = !!userAnswer;
@@ -71,6 +65,6 @@ function GamePage(): JSX.Element {
       </div>
     </div>
   );
-}
+};
 
 export default GamePage;

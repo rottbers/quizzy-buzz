@@ -1,4 +1,4 @@
-import { Question } from '../types';
+import { Questions } from '../types';
 
 interface Session {
   token: string;
@@ -28,7 +28,7 @@ async function getSession() {
   }
 }
 
-function formatQuestions(questions: Question[]) {
+function formatQuestions(questions: Questions) {
   function decodeHTML(html: string) {
     const text = document.createElement('textarea');
     text.innerHTML = html;
@@ -67,7 +67,7 @@ function formatQuestions(questions: Question[]) {
   return formatedQuestions;
 }
 
-export async function getQuestions(url: string): Promise<Question[]> {
+export async function getQuestions(url: string): Promise<Questions> {
   try {
     const { token } = await getSession();
 

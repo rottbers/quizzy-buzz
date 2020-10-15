@@ -12,16 +12,17 @@ export interface Question {
   all_answers: string[];
 }
 
+export type Questions = Question[];
+
+export type Status = 'idle' | 'loading' | 'playing' | 'gameover' | 'error';
+
 export interface State {
-  questions: Question[];
+  questions: Questions;
   difficulty: Difficulty;
   type: Type;
   rounds: number;
   round: number;
   score: number;
   userAnswers: string[];
-  isLoading: boolean;
-  isError: boolean;
-  isPlaying: boolean;
-  isGameOver: boolean;
+  status: Status;
 }

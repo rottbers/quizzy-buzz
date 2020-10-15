@@ -1,8 +1,8 @@
-import React, { useContext } from 'react';
-import { StateContext } from '../contexts/StateContext';
+import React from 'react';
+import { useStateContext } from '../contexts/StateContext';
 
-function GameSummaryPage(): JSX.Element {
-  const { state, updateState } = useContext(StateContext);
+const GameSummaryPage: React.FC = () => {
+  const { state, dispatch } = useStateContext();
   const { userAnswers, questions, rounds, score } = state;
 
   const percentage = Math.round((score / rounds) * 100);
@@ -59,14 +59,11 @@ function GameSummaryPage(): JSX.Element {
           </li>
         ))}
       </ul>
-      <button
-        className="my-4"
-        onClick={() => updateState({ isGameOver: false })}
-      >
+      <button className="my-4" onClick={() => dispatch({ type: 'IDLE' })}>
         Go back home
       </button>
     </div>
   );
-}
+};
 
 export default GameSummaryPage;

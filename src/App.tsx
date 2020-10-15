@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { StateContext } from './contexts/StateContext';
+import React from 'react';
+import { useStateContext } from './contexts/StateContext';
 
 import LoadingPage from './pages/LoadingPage';
 import ErrorPage from './pages/ErrorPage';
@@ -11,48 +11,34 @@ import { getQuestions } from './utilities';
 
 import './styles/tailwind.css';
 
-function App(): JSX.Element {
-  const { state, updateState } = useContext(StateContext);
-  const {
-    isLoading,
-    isError,
-    isPlaying,
-    isGameOver,
-    difficulty,
-    type,
-    rounds,
-  } = state;
+const App: React.FC = () => {
+  const { state, dispatch } = useStateContext();
+  const { status, difficulty, type, rounds } = state;
 
   async function handlePlay() {
-    updateState({ isLoading: true, isError: false, isGameOver: false });
+    dispatch({ type: 'LOADING' });
 
     try {
       const url = `https://opentdb.com/api.php?difficulty=${difficulty}&type=${type}&amount=${rounds}`;
       const questions = await getQuestions(url);
-      updateState({
-        questions,
-        isLoading: false,
-        isPlaying: true,
-        score: 0,
-        round: 0,
-        userAnswers: [],
-      });
+      dispatch({ type: 'PLAY', data: { questions } });
     } catch {
-      updateState({ isError: true, isLoading: false });
+      dispatch({ type: 'ERROR' });
     }
   }
 
-  const isNotStarted = !isLoading && !isError && !isPlaying && !isGameOver;
-
-  return (
-    <>
-      {isLoading && <LoadingPage />}
-      {isError && <ErrorPage handleTryAgain={handlePlay} />}
-      {isPlaying && <GamePage />}
-      {isGameOver && <GameSummaryPage />}
-      {isNotStarted && <StartPage handlePlay={handlePlay} />}
-    </>
-  );
-}
+  switch (status) {
+    case 'loading':
+      return <LoadingPage />;
+    case 'error':
+      return <ErrorPage handleTryAgain={handlePlay} />;
+    case 'playing':
+      return <GamePage />;
+    case 'gameover':
+      return <GameSummaryPage />;
+    case 'idle':
+      return <StartPage handlePlay={handlePlay} />;
+  }
+};
 
 export default App;

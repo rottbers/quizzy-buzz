@@ -1,10 +1,7 @@
 import React from 'react';
 
-interface Props {
-  handleTryAgain: () => void;
-}
-
-const ErrorPage = ({ handleTryAgain }: Props): JSX.Element => (
+// prettier-ignore
+const ErrorPage: React.FC<{ handleTryAgain: () => void }> = ({ handleTryAgain }) => (
   <div className="container mx-auto p-4 min-h-screen flex flex-col justify-center">
     <h1 className="font-mono text-xl text-center mb-6">
       Whoops! Something went wrong fetching questions from{' '}

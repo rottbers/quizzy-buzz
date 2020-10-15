@@ -1,22 +1,20 @@
-import React, { useContext, Fragment } from 'react';
-import { StateContext } from '../contexts/StateContext';
+import React, { Fragment } from 'react';
+import { useStateContext } from '../contexts/StateContext';
 // @ts-expect-error due to parcel import format
 import reactSvg from 'url:../assets/react.svg';
 
 import { Type, Difficulty } from '../types';
 import { capitalizeString } from '../utilities';
 
-interface Props {
-  handlePlay: () => void;
-}
-
-function StartPage({ handlePlay }: Props): JSX.Element {
-  const { state, updateState } = useContext(StateContext);
-  
-  const { type, difficulty, rounds, isLoading } = state;
+const StartPage: React.FC<{ handlePlay: () => void }> = ({ handlePlay }) => {
+  const { state, dispatch } = useStateContext();
+  const { type, difficulty, rounds, status } = state;
 
   function onChange(e: React.ChangeEvent<HTMLInputElement>) {
-    updateState({ [e.target.name]: e.target.value });
+    dispatch({
+      type: 'UPDATE_SETTINGS',
+      data: { [e.target.name]: e.target.value },
+    });
   }
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -105,12 +103,12 @@ function StartPage({ handlePlay }: Props): JSX.Element {
           min={1}
           max={50}
         />
-        <button className="mt-6" type="submit" disabled={isLoading}>
+        <button className="mt-6" type="submit" disabled={status === 'loading'}>
           Play
         </button>
       </form>
     </div>
   );
-}
+};
 
 export default StartPage;
