@@ -8,6 +8,12 @@
       "sizes": "192x192"
     },
     {
+      "src": "favicon-196x196.png",
+      "type": "image/png",
+      "sizes": "196x196",
+      "purpose": "maskable"
+    },
+    {
       "src": "favicon-512x512.png",
       "sizes": "512x512",
       "type": "image/png"
@@ -16,6 +22,6 @@
   "theme_color": "#141e30",
   "background_color": "#141e30",
   "start_url": "/",
-  "display": "minimal-ui",
+  "display": "standalone",
   "orientation": "portrait"
 }

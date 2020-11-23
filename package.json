@@ -5,8 +5,8 @@
   "scripts": {
     "start": "parcel src/assets/index.html",
     "build": "parcel build src/assets/index.html --no-source-maps",
-    "lint": "eslint --ext .ts,.tsx src/ ",
-    "clean": "rm -r .parcel-cache/ dist/"
+    "postbuild": "cp src/assets/favicon-*.png dist/",
+    "lint": "eslint --ext .ts,.tsx src/ "
   },
   "dependencies": {
     "react": "^16.13.1",
