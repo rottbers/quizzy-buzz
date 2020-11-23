@@ -1,8 +1,9 @@
 import React from 'react';
+import Layout from '../components/Layout';
 
 // prettier-ignore
 const ErrorPage: React.FC<{ handleTryAgain: () => void }> = ({ handleTryAgain }) => (
-  <div className="container mx-auto p-4 min-h-screen flex flex-col justify-center">
+  <Layout className="justify-center">
     <h1 className="font-mono text-xl text-center mb-6">
       Whoops! Something went wrong fetching questions from{' '}
       <a
@@ -21,7 +22,7 @@ const ErrorPage: React.FC<{ handleTryAgain: () => void }> = ({ handleTryAgain })
     <button className="button self-center" onClick={handleTryAgain}>
       Try again?
     </button>
-  </div>
+  </Layout>
 );
 
 export default ErrorPage;

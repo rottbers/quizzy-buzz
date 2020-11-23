@@ -1,5 +1,6 @@
 import React from 'react';
 import { useStateContext } from '../contexts/StateContext';
+import Layout from '../components/Layout';
 
 const GameSummaryPage: React.FC = () => {
   const { state, dispatch } = useStateContext();
@@ -17,8 +18,8 @@ const GameSummaryPage: React.FC = () => {
   })();
 
   return (
-    <div className="max-w-screen-md mx-auto p-2 md:p-4 min-h-screen flex flex-col align-center md:justify-center">
-      <h1 className="text-2xl md:text-4xl font-bold self-center mt-6">
+    <Layout className="sm:justify-center">
+      <h1 className="text-3xl md:text-4xl font-bold self-center m-4">
         You got <span className="underline">{percentage}%</span> right! {emoji}
       </h1>
       <ul>
@@ -39,9 +40,9 @@ const GameSummaryPage: React.FC = () => {
                   : 'Wrong answer 😞'}
               </span>
             </div>
-            <h3 className="text-lg font-semibold text-center my-6">
+            <h2 className="text-lg font-semibold text-center my-6">
               {question}
-            </h3>
+            </h2>
             <p>
               Correct answer:{' '}
               <span className="font-semibold underline text-green-600">
@@ -62,7 +63,7 @@ const GameSummaryPage: React.FC = () => {
       <button className="my-4" onClick={() => dispatch({ type: 'IDLE' })}>
         Go back home
       </button>
-    </div>
+    </Layout>
   );
 };
 
