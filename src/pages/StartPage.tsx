@@ -54,7 +54,7 @@ const StartPage: React.FC<{ handlePlay: () => void }> = ({ handlePlay }) => {
         <RadioGroup
           name="type"
           options={typeOptions}
-          selected={type}
+          selectedOption={type}
           onChange={onChange}
         />
 
@@ -64,7 +64,7 @@ const StartPage: React.FC<{ handlePlay: () => void }> = ({ handlePlay }) => {
         <RadioGroup
           name="difficulty"
           options={difficultyOptions}
-          selected={difficulty}
+          selectedOption={difficulty}
           onChange={onChange}
         />
 
@@ -83,7 +83,11 @@ const StartPage: React.FC<{ handlePlay: () => void }> = ({ handlePlay }) => {
           min={1}
           max={50}
         />
-        <button className="mt-8" type="submit" disabled={status === 'loading'}>
+        <button
+          className="button hover:text-gray-900 focus:text-gray-900 hover:bg-gray-100 focus:bg-gray-100 mt-8"
+          type="submit"
+          disabled={status === 'loading'}
+        >
           Play
         </button>
       </form>

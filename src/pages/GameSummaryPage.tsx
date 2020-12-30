@@ -1,8 +1,10 @@
 import React from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useStateContext } from '../contexts/StateContext';
 import Layout from '../components/Layout';
 
 const GameSummaryPage: React.FC = () => {
+  const shouldReduceMotion = useReducedMotion();
   const { state, dispatch } = useStateContext();
   const { userAnswers, questions, rounds, score } = state;
 
@@ -23,8 +25,14 @@ const GameSummaryPage: React.FC = () => {
         You got <span className="underline">{percentage}%</span> right! {emoji}
       </h1>
       <ul>
-        {questions.map(({ question, correct_answer }, index: number) => (
-          <li
+        {questions.map(({ question, correct_answer }, index) => (
+          <motion.li
+            initial={{ opacity: 0, y: shouldReduceMotion ? 0 : -50 * index }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              transition: { delay: shouldReduceMotion ? 0 : 0.15 * index },
+            }}
             key={question}
             className={`my-4 p-4 border-2 rounded-md ${
               userAnswers[index] === correct_answer
@@ -57,10 +65,13 @@ const GameSummaryPage: React.FC = () => {
                 </span>
               </p>
             )}
-          </li>
+          </motion.li>
         ))}
       </ul>
-      <button className="my-4" onClick={() => dispatch({ type: 'IDLE' })}>
+      <button
+        className="my-4 button hover:text-gray-900 focus:text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
+        onClick={() => dispatch({ type: 'IDLE' })}
+      >
         Go back home
       </button>
     </Layout>

@@ -19,7 +19,10 @@ const ErrorPage: React.FC<{ handleTryAgain: () => void }> = ({ handleTryAgain })
         😔
       </span>
     </h1>
-    <button className="button self-center" onClick={handleTryAgain}>
+    <button
+      className="self-center button hover:text-gray-900 focus:text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
+      onClick={handleTryAgain}
+    >
       Try again?
     </button>
   </Layout>

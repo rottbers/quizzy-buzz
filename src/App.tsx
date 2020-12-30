@@ -9,8 +9,6 @@ import StartPage from './pages/StartPage';
 
 import { getQuestions } from './utilities';
 
-import './styles/tailwind.css';
-
 const App: React.FC = () => {
   const { state, dispatch } = useStateContext();
   const { status, difficulty, type, rounds } = state;

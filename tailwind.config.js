@@ -25,6 +25,7 @@ module.exports = {
       animation: ['motion-safe'],
       borderColor: ['disabled'],
       cursor: ['disabled', 'hover'],
+      textColor: ['disabled'],
     },
   },
   plugins: [],
