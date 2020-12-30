@@ -8,7 +8,8 @@ interface Session {
 // to prevent getting the same question twice a session token is used
 // with each request (expires after 6 hours of inactivity).
 async function getSession() {
-  const session: Session | null = JSON.parse(localStorage.getItem('session')); // TODO: look into type error
+  const existingSession = localStorage.getItem('session');
+  const session: Session = existingSession ? JSON.parse(existingSession) : null;
 
   if (session !== null && session.tokenLastUsed > Date.now() - 18000000) {
     return session;
@@ -20,7 +21,7 @@ async function getSession() {
     const response = await fetch(tokenUrl);
     const { token } = await response.json();
 
-    const newSession = { token, tokenLastUsed: null };
+    const newSession: Session = { token, tokenLastUsed: 0 };
 
     return newSession;
   } catch (error) {
@@ -67,11 +68,20 @@ function formatQuestions(questions: Questions) {
   return formatedQuestions;
 }
 
-export async function getQuestions(url: string): Promise<Questions> {
+interface Settings {
+  difficulty: string;
+  type: string;
+  rounds: string | number;
+}
+
+export async function getQuestions(settings: Settings): Promise<Questions> {
   try {
     const { token } = await getSession();
 
-    const response = await fetch(`${url}&token=${token}`);
+    const { difficulty, type, rounds } = settings;
+    const url = `https://opentdb.com/api.php?difficulty=${difficulty}&type=${type}&amount=${rounds}&token=${token}`;
+
+    const response = await fetch(url);
     const { results } = await response.json();
 
     const session = { token, tokenLastUsed: Date.now() };

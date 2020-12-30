@@ -17,8 +17,7 @@ const App: React.FC = () => {
     dispatch({ type: 'LOADING' });
 
     try {
-      const url = `https://opentdb.com/api.php?difficulty=${difficulty}&type=${type}&amount=${rounds}`;
-      const questions = await getQuestions(url);
+      const questions = await getQuestions({ difficulty, type, rounds });
       dispatch({ type: 'PLAY', data: { questions } });
     } catch {
       dispatch({ type: 'ERROR' });
