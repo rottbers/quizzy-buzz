@@ -2,23 +2,12 @@ import React, { createContext, useContext, useReducer } from 'react';
 
 import { State, Questions, Difficulty, Type } from '../types';
 
-const initialState: State = {
-  questions: [],
-  difficulty: 'medium',
-  type: 'multiple',
-  rounds: 4,
-  round: 0,
-  score: 0,
-  userAnswers: [],
-  status: 'idle',
-};
-
 // prettier-ignore
 type Event =
   | { type: 'IDLE' | 'LOADING' | 'ERROR' | 'NEXT_ROUND' }
   | { type: 'PLAY'; data: { questions: Questions } }
   | { type: 'UPDATE_SETTINGS', data: { difficulty?: Difficulty, type?: Type, rounds?: number } }
-  | { type: 'UPDATE_SCORE', data: { correctAnswer: string; selectedAnswer: string } };
+  | { type: 'SUBMIT_ANSWER', data: { answer: string } };
 
 function reducer(state: State, event: Event): State {
   switch (event.type) {
@@ -30,33 +19,38 @@ function reducer(state: State, event: Event): State {
       return { ...state, status: 'error' };
     case 'PLAY': {
       const { questions } = event.data;
-      return {
-        ...state,
-        questions,
-        round: 0,
-        score: 0,
-        userAnswers: [],
-        status: 'playing',
-      };
+      return { ...state, questions, round: 0, score: 0, userAnswers: [], status: 'playing' }; // prettier-ignore
     }
     case 'UPDATE_SETTINGS':
       return { ...state, ...event.data };
-    case 'UPDATE_SCORE': {
-      const { correctAnswer, selectedAnswer } = event.data;
-      let score = state.score;
-      if (selectedAnswer === correctAnswer) score = score + 1;
-      const userAnswers = [...state.userAnswers, selectedAnswer];
+    case 'SUBMIT_ANSWER': {
+      const { answer } = event.data;
+      const correctAnswer = state.questions[state.round].correct_answer;
+      const userAnswers = [...state.userAnswers, answer];
+      const score = answer === correctAnswer ? state.score + 1 : state.score; // prettier-ignore
       return { ...state, score, userAnswers };
     }
     case 'NEXT_ROUND': {
       const { round, rounds } = state;
-      if (round < rounds - 1) return { ...state, round: round + 1 };
-      return { ...state, status: 'gameover' };
+      return round < rounds - 1
+        ? { ...state, round: round + 1 }
+        : { ...state, status: 'gameover' };
     }
     default:
       return state;
   }
 }
+
+const initialState: State = {
+  questions: [],
+  difficulty: 'medium',
+  type: 'multiple',
+  rounds: 4,
+  round: 0,
+  score: 0,
+  userAnswers: [],
+  status: 'idle',
+};
 
 interface Context {
   state: State;

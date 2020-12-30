@@ -11,17 +11,6 @@ const GamePage: React.FC = () => {
   const { question, all_answers, correct_answer } = questions[round];
   const userAnswer = userAnswers[round];
 
-  function handleAnswer(e: React.MouseEvent<HTMLButtonElement>) {
-    const selectedAnswer = e.target.value; // TODO: look into type error
-    dispatch({
-      type: 'UPDATE_SCORE',
-      data: {
-        correctAnswer: correct_answer,
-        selectedAnswer,
-      },
-    });
-  }
-
   const showAnswer = !!userAnswer;
 
   function handleButtonHighlight(answer: string) {
@@ -54,7 +43,9 @@ const GamePage: React.FC = () => {
             }}
             value={answer}
             key={answer}
-            onClick={handleAnswer}
+            onClick={() =>
+              dispatch({ type: 'SUBMIT_ANSWER', data: { answer } })
+            }
             className={`button m-2 w-full ${
               showAnswer
                 ? handleButtonHighlight(answer)
