@@ -1,8 +1,4 @@
 module.exports = {
-  alias: {
-    '@components': './src/components',
-    '@pages': './src/pages',
-  },
   mount: { src: '/dist', public: '/' },
   plugins: [
     '@snowpack/plugin-postcss',
