@@ -1,35 +1,16 @@
-import { Questions } from '../types';
+import { UnformattedQuestions, Questions, Difficulty, Type } from '../types';
 
 interface Session {
   token: string;
   tokenLastUsed: number;
 }
-
-// to prevent getting the same question twice a session token is used
-// with each request (expires after 6 hours of inactivity).
-async function getSession() {
-  const existingSession = localStorage.getItem('session');
-  const session: Session = existingSession ? JSON.parse(existingSession) : null;
-
-  if (session !== null && session.tokenLastUsed > Date.now() - 18000000) {
-    return session;
-  }
-
-  try {
-    const tokenUrl = 'https://opentdb.com/api_token.php?command=request';
-
-    const response = await fetch(tokenUrl);
-    const { token } = await response.json();
-
-    const newSession: Session = { token, tokenLastUsed: 0 };
-
-    return newSession;
-  } catch (error) {
-    throw new Error(error);
-  }
+interface Settings {
+  difficulty: Difficulty;
+  type: Type;
+  rounds: number;
 }
 
-function formatQuestions(questions: Questions) {
+function formatQuestions(questions: UnformattedQuestions): Questions {
   function decodeHTML(html: string) {
     const text = document.createElement('textarea');
     text.innerHTML = html;
@@ -40,7 +21,7 @@ function formatQuestions(questions: Questions) {
     return array.sort(() => Math.random() - 0.5);
   }
 
-  const formatedQuestions = questions.map((q) => {
+  const formattedQuestions = questions.map((q) => {
     const { question, correct_answer, incorrect_answers } = q;
 
     const decodedQuestion = decodeHTML(question);
@@ -65,13 +46,30 @@ function formatQuestions(questions: Questions) {
     };
   });
 
-  return formatedQuestions;
+  return formattedQuestions;
 }
 
-interface Settings {
-  difficulty: string;
-  type: string;
-  rounds: string | number;
+// to prevent getting the same question twice a session token is used
+// with each request (expires after 6 hours of inactivity).
+async function getSession(): Promise<Session> {
+  const existingSession = localStorage.getItem('session');
+  const session: Session = existingSession ? JSON.parse(existingSession) : null;
+
+  if (session !== null && session.tokenLastUsed > Date.now() - 18000000) {
+    return session;
+  }
+
+  try {
+    const tokenURL = 'https://opentdb.com/api_token.php?command=request';
+
+    const response = await fetch(tokenURL);
+    const { token }: { token: string } = await response.json();
+
+    const newSession = { token, tokenLastUsed: 0 };
+    return newSession;
+  } catch (error) {
+    throw new Error(error);
+  }
 }
 
 export async function getQuestions(settings: Settings): Promise<Questions> {
@@ -79,10 +77,10 @@ export async function getQuestions(settings: Settings): Promise<Questions> {
     const { token } = await getSession();
 
     const { difficulty, type, rounds } = settings;
-    const url = `https://opentdb.com/api.php?difficulty=${difficulty}&type=${type}&amount=${rounds}&token=${token}`;
+    const questionsURL = `https://opentdb.com/api.php?difficulty=${difficulty}&type=${type}&amount=${rounds}&token=${token}`;
 
-    const response = await fetch(url);
-    const { results } = await response.json();
+    const response = await fetch(questionsURL);
+    const { results }: { results: UnformattedQuestions } = await response.json(); // prettier-ignore
 
     const session = { token, tokenLastUsed: Date.now() };
     localStorage.setItem('session', JSON.stringify(session));
