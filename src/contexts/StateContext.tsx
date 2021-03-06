@@ -1,13 +1,16 @@
 import React, { createContext, useContext, useReducer } from 'react';
+import { State, Questions, Settings } from '../types';
 
-import { State, Questions, Difficulty, Type } from '../types';
+interface Context {
+  state: State;
+  dispatch: React.Dispatch<Event>;
+}
 
-// prettier-ignore
 type Event =
   | { type: 'IDLE' | 'LOADING' | 'ERROR' | 'NEXT_ROUND' }
   | { type: 'PLAY'; data: { questions: Questions } }
-  | { type: 'UPDATE_SETTINGS', data: { difficulty?: Difficulty, type?: Type, rounds?: number } }
-  | { type: 'SUBMIT_ANSWER', data: { answer: string } };
+  | { type: 'UPDATE_SETTINGS'; data: Partial<Settings> }
+  | { type: 'SUBMIT_ANSWER'; data: { answer: string } };
 
 function reducer(state: State, event: Event): State {
   switch (event.type) {
@@ -21,8 +24,10 @@ function reducer(state: State, event: Event): State {
       const { questions } = event.data;
       return { ...state, questions, round: 0, score: 0, userAnswers: [], status: 'playing' }; // prettier-ignore
     }
-    case 'UPDATE_SETTINGS':
-      return { ...state, ...event.data };
+    case 'UPDATE_SETTINGS': {
+      const { rounds = state.rounds, type = state.type, difficulty = state.difficulty } = event.data; // prettier-ignore
+      return { ...state, type, difficulty, rounds };
+    }
     case 'SUBMIT_ANSWER': {
       const { answer } = event.data;
       const correctAnswer = state.questions[state.round].correct_answer;
@@ -51,11 +56,6 @@ const initialState: State = {
   userAnswers: [],
   status: 'idle',
 };
-
-interface Context {
-  state: State;
-  dispatch: React.Dispatch<Event>;
-}
 
 const StateContext = createContext<Context>({
   state: initialState,

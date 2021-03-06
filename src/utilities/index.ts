@@ -1,13 +1,8 @@
-import { UnformattedQuestions, Questions, Difficulty, Type } from '../types';
+import { UnformattedQuestions, Questions, Settings } from '../types';
 
 interface Session {
   token: string;
   tokenLastUsed: number;
-}
-interface Settings {
-  difficulty: Difficulty;
-  type: Type;
-  rounds: number;
 }
 
 function formatQuestions(questions: UnformattedQuestions): Questions {

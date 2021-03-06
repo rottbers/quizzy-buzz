@@ -10,16 +10,22 @@ interface UnformattedQuestion {
   correct_answer: string;
   incorrect_answers: string[];
 }
+
+export type UnformattedQuestions = UnformattedQuestion[];
+
 interface Question extends UnformattedQuestion {
   all_answers: string[];
 }
 
-export type UnformattedQuestions = UnformattedQuestion[];
-
 export type Questions = Question[];
 
-export type Status = 'idle' | 'loading' | 'playing' | 'gameover' | 'error';
+export interface Settings {
+  difficulty: Difficulty;
+  type: Type;
+  rounds: number;
+}
 
+export type Status = 'idle' | 'loading' | 'playing' | 'gameover' | 'error';
 export interface State {
   questions: Questions;
   difficulty: Difficulty;
