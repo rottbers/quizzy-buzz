@@ -12,7 +12,7 @@ const LoadingPage: React.FC = () => (
         width="1em"
       >
         <circle
-          className="animate-spin-funky origin-center stroke-current text-yellow-300"
+          className="animate-spin-funky origin-center stroke-current text-green-300"
           style={{
             fill: 'transparent',
             strokeWidth: '10px',

@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { capitalizeString } from '../utilities';
 
 interface Props {
@@ -13,37 +13,35 @@ const RadioGroup: React.FC<Props> = ({
   options,
   selectedOption,
   onChange,
-}) => {
-  return (
-    <div className="flex justify-between mt-2 rounded-md border-2 border-white w-full">
-      {options.map((option, index) => {
-        const optionId = `${name}-${option}`;
-        return (
-          <Fragment key={option}>
-            <input
-              type="radio"
-              name={name}
-              id={optionId}
-              value={option}
-              checked={selectedOption === option}
-              onChange={onChange}
-              className="h-0 w-0 absolute opacity-0"
-            />
-            <label
-              htmlFor={optionId}
-              className={`py-2 px-6 w-full border-white text-center select-none ${
-                selectedOption === option
-                  ? 'text-gray-900 bg-white focus:ring'
-                  : 'hover:cursor-pointer hover:text-gray-900 hover:bg-gray-200'
-              } ${index === options.length - 1 ? 'border-r-0' : 'border-r-2'}`}
-            >
-              {capitalizeString(option)}
-            </label>
-          </Fragment>
-        );
-      })}
-    </div>
-  );
-};
+}) => (
+  <div className="w-full flex flex-row justify-between rounded-md border-2 border-white focus-within:ring">
+    {options.map((option) => {
+      const optionId = `${name}-${option}`;
+
+      return (
+        <label
+          key={optionId}
+          htmlFor={optionId}
+          className={`py-2 px-6 w-full border-white text-center select-none border-r-2 last:border-r-0 ${
+            selectedOption === option
+              ? 'text-gray-900 bg-white'
+              : 'hover:cursor-pointer hover:text-gray-900 hover:bg-white'
+          } `}
+        >
+          <input
+            type="radio"
+            name={name}
+            id={optionId}
+            value={option}
+            checked={selectedOption === option}
+            onChange={onChange}
+            className="absolute h-0 w-0 opacity-0"
+          />
+          {capitalizeString(option)}
+        </label>
+      );
+    })}
+  </div>
+);
 
 export default RadioGroup;

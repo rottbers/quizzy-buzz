@@ -24,6 +24,7 @@ module.exports = {
     extend: {
       animation: ['motion-safe'],
       borderColor: ['disabled'],
+      borderWidth: ['last'],
       cursor: ['disabled', 'hover'],
       textColor: ['disabled'],
     },

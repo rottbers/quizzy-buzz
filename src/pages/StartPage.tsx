@@ -5,22 +5,23 @@ import { useStateContext } from '../contexts/StateContext';
 import Layout from '../components/Layout';
 import RadioGroup from '../components/RadioGroup';
 
+import { getQuestions } from '../utilities';
 import { Type, Difficulty } from '../types';
 
-const StartPage: React.FC<{ handlePlay: () => void }> = ({ handlePlay }) => {
+const StartPage: React.FC = () => {
   const { state, dispatch } = useStateContext();
   const { type, difficulty, rounds, status } = state;
 
-  function onChange(e: React.ChangeEvent<HTMLInputElement>) {
-    dispatch({
-      type: 'UPDATE_SETTINGS',
-      data: { [e.target.name]: e.target.value },
-    });
-  }
-
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    handlePlay();
+    dispatch({ type: 'LOADING' });
+
+    try {
+      const questions = await getQuestions({ difficulty, type, rounds });
+      dispatch({ type: 'PLAY', data: { questions } });
+    } catch {
+      dispatch({ type: 'ERROR' });
+    }
   }
 
   const typeOptions: Type[] = ['boolean', 'multiple'];
@@ -28,63 +29,79 @@ const StartPage: React.FC<{ handlePlay: () => void }> = ({ handlePlay }) => {
 
   return (
     <Layout className="justify-center">
-      <h1 className="text-5xl mb-1 md:text-6xl md:mb-2 font-black italic">
-        Quizzy{' '}
-        <span className="motion-safe:animate-pulse text-yellow-300">buzz</span>
+      <h1 className="text-6xl mb-2 md:text-7xl font-black italic">
+        Quizzy <span className="text-green-400">buzz</span>
       </h1>
-      <p>
+      <p className="text-gray-400">
         A quiz game built with{' '}
         <a
-          className="underline"
+          className="underline focus:text-green-400 hover:text-green-400"
           href="https://reactjs.org/"
-          target="_blank"
-          rel="noopener noreferrer"
         >
           react
         </a>{' '}
-        <ReactLogo className="inline-block align-middle h-8 w-8 motion-safe:animate-spin-4" />
+        <ReactLogo
+          aria-hidden="true"
+          className="inline-block align-middle h-8 w-8 motion-safe:animate-spin-4"
+        />
       </p>
       <form
         className="flex flex-col items-center w-full max-w-md"
         onSubmit={onSubmit}
       >
-        <label className="font-semibold mt-6" htmlFor="type">
+        <label htmlFor="type" className="font-semibold mt-6 mb-2">
           Type of answers:
         </label>
         <RadioGroup
           name="type"
           options={typeOptions}
           selectedOption={type}
-          onChange={onChange}
+          onChange={(e) =>
+            dispatch({
+              type: 'UPDATE_SETTINGS',
+              data: { [e.target.name]: e.target.value }, // TODO: look into typing e.target.value
+            })
+          }
         />
 
-        <label className="font-semibold mt-6" htmlFor="difficulty">
+        <label htmlFor="difficulty" className="font-semibold mt-6 mb-2">
           Difficulty of questions:
         </label>
         <RadioGroup
           name="difficulty"
           options={difficultyOptions}
           selectedOption={difficulty}
-          onChange={onChange}
+          onChange={(e) =>
+            dispatch({
+              type: 'UPDATE_SETTINGS',
+              data: { [e.target.name]: e.target.value }, // TODO: look into typing e.target.value
+            })
+          }
         />
 
-        <label className="font-semibold mt-6" htmlFor="rounds">
+        <label htmlFor="rounds" className="font-semibold mt-6 mb-2">
           Number ( <span className="font-bold underline">{rounds}</span> ) of
           questions:
         </label>
         <input
-          className="w-full bg-transparent cursor-pointer"
+          className="slider"
           id="rounds"
           name="rounds"
           type="range"
           value={rounds}
-          onChange={onChange}
           step={1}
           min={1}
           max={50}
+          onChange={(e) =>
+            dispatch({
+              type: 'UPDATE_SETTINGS',
+              data: { rounds: e.target.valueAsNumber },
+            })
+          }
         />
+
         <button
-          className="button hover:text-gray-900 focus:text-gray-900 hover:bg-gray-100 focus:bg-gray-100 mt-8"
+          className="mt-12 button rounded-full border-green-400 bg-green-400 text-gray-900"
           type="submit"
           disabled={status === 'loading'}
         >

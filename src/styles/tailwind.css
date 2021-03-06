@@ -2,16 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  a:hover,
-  a:focus {
-    @apply text-gray-400;
-  }
-}
-
 @layer components {
   .button {
     @apply font-semibold border-2 rounded-md py-2 px-4 cursor-pointer focus:outline-none focus:ring disabled:cursor-default;
     min-width: 12rem;
   }
+}
+
+.slider {
+  @apply bg-transparent w-full mt-1 cursor-pointer rounded-md focus:outline-none focus:ring;
+  -webkit-appearance: none;
+}
+
+input[type='range'].slider::-moz-range-track {
+  @apply bg-white border-white rounded-md h-2;
+}
+
+input[type='range'].slider::-webkit-slider-runnable-track {
+  @apply bg-white border-white rounded-md h-2;
+}
+
+input[type='range'].slider::-moz-range-thumb {
+  @apply bg-white border border-gray-900 rounded-full h-8 w-8;
+}
+
+input[type='range'].slider::-webkit-slider-thumb {
+  @apply bg-white border border-gray-900 rounded-full w-8 h-8 -mt-3;
+  -webkit-appearance: none;
 }

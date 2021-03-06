@@ -7,34 +7,20 @@ import GamePage from './pages/GamePage';
 import GameSummaryPage from './pages/GameSummaryPage';
 import StartPage from './pages/StartPage';
 
-import { getQuestions } from './utilities';
-
 const App: React.FC = () => {
-  const { state, dispatch } = useStateContext();
-  const { status, difficulty, type, rounds } = state;
-
-  async function handlePlay() {
-    dispatch({ type: 'LOADING' });
-
-    try {
-      const questions = await getQuestions({ difficulty, type, rounds });
-      dispatch({ type: 'PLAY', data: { questions } });
-    } catch {
-      dispatch({ type: 'ERROR' });
-    }
-  }
+  const { state: { status } } = useStateContext(); // prettier-ignore
 
   switch (status) {
     case 'loading':
       return <LoadingPage />;
     case 'error':
-      return <ErrorPage handleTryAgain={handlePlay} />;
+      return <ErrorPage />;
     case 'playing':
       return <GamePage />;
     case 'gameover':
       return <GameSummaryPage />;
     case 'idle':
-      return <StartPage handlePlay={handlePlay} />;
+      return <StartPage />;
   }
 };
 

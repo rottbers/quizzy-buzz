@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
+import { MdCheck, MdClose } from 'react-icons/md';
 import { useStateContext } from '../contexts/StateContext';
 import Layout from '../components/Layout';
 
@@ -14,22 +15,26 @@ const GamePage: React.FC = () => {
   const showAnswer = !!userAnswer;
 
   function handleButtonHighlight(answer: string) {
-    if (answer === correct_answer) return 'bg-green-600 border-green-600';
-    if (answer === userAnswer) return 'bg-red-700 border-red-700';
-    return 'border-gray-500 text-gray-500';
+    if (answer === correct_answer) {
+      return answer === userAnswer
+        ? 'bg-green-400 border-green-400 text-gray-900'
+        : 'border-green-400';
+    }
+    if (answer === userAnswer) return 'bg-red-600 border-red-600';
+    return 'border-gray-400 text-gray-400';
   }
 
   const isLastRound = round === rounds - 1;
 
   return (
     <Layout className="sm:justify-center">
-      <header className="font-mono flex justify-between mb-2 w-full">
+      <header className="font-mono text-gray-400 flex justify-between mb-2 w-full">
         <p>
-          Round {round + 1} of {rounds}
+          Question {round + 1} / {rounds}
         </p>
         <p>Score {score}</p>
       </header>
-      <h1 className="self-center text-xl font-semibold break-words max-w-full md:text-2xl my-4 mx-2 md:m-6 italic">
+      <h1 className="self-center text-center text-xl font-semibold break-words max-w-full md:text-2xl my-4 mx-2 md:m-6">
         {question}
       </h1>
       <div className="flex flex-wrap justify-center my-2 md:my-4">
@@ -41,30 +46,38 @@ const GamePage: React.FC = () => {
               y: 0,
               transition: { delay: shouldReduceMotion ? 0 : 0.05 * index },
             }}
-            value={answer}
             key={answer}
+            value={answer}
+            disabled={showAnswer}
             onClick={() =>
               dispatch({ type: 'SUBMIT_ANSWER', data: { answer } })
             }
-            className={`button m-2 w-full ${
+            className={`button m-2 w-full relative ${
               showAnswer
                 ? handleButtonHighlight(answer)
                 : 'hover:text-gray-900 focus:text-gray-900 hover:bg-gray-100 focus:bg-gray-100'
             }`}
-            disabled={showAnswer}
           >
-            {answer}
+            {answer}{' '}
+            {showAnswer &&
+              (answer === userAnswer || answer === correct_answer) && (
+                <span className="absolute right-1 bg-white text-gray-900 p-1 rounded-full opacity-80">
+                  {answer === correct_answer ? (
+                    <MdCheck aria-label="correct" />
+                  ) : (
+                    <MdClose aria-label="wrong" />
+                  )}
+                </span>
+              )}
           </motion.button>
         ))}
       </div>
       <div
         className={`self-center text-center ${showAnswer ? '' : 'invisible'}`}
       >
-        <p className={'self-center mb-4 text-xl font-semibold'} role="status">
-          {userAnswer === correct_answer ? `Correct! 🎊` : `Wrong answer.. 🙈`}
-        </p>
         <button
-          className="button hover:text-gray-900 focus:text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
+          className="mt-6 button rounded-full hover:text-gray-900 focus:text-gray-900 hover:bg-gray-100 focus:bg-gray-100"
+          disabled={!showAnswer}
           onClick={() => dispatch({ type: 'NEXT_ROUND' })}
         >
           {isLastRound ? 'See summary' : 'Next question'}
