@@ -30,7 +30,7 @@ const StartPage: React.FC = () => {
   return (
     <Layout className="justify-center">
       <h1 className="text-6xl mb-2 md:text-7xl font-black italic">
-        Quizzy <span className="text-green-400">buzz</span>
+        Quiz <span className="text-green-400">buzz</span>
       </h1>
       <p className="text-gray-400">
         A quiz game built with{' '}
