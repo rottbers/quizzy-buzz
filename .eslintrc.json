@@ -2,7 +2,7 @@
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "sourceType": "module",
-    "ecmaVersion": 2020,
+    "ecmaVersion": 2021,
     "ecmaFeatures": {
       "jsx": true
     }
@@ -26,8 +26,7 @@
     "plugin:jsx-a11y/recommended",
     "plugin:import/typescript",
     "plugin:@typescript-eslint/recommended",
-    "prettier",
-    "prettier/@typescript-eslint"
+    "prettier"
   ],
   "rules": {
     "no-console": "warn",
